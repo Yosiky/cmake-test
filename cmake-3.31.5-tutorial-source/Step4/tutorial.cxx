@@ -8,6 +8,7 @@
 
 int main(int argc, char* argv[])
 {
+  int value;
   if (argc < 2) {
     // report version
     std::cout << argv[0] << " Version " << Tutorial_VERSION_MAJOR << "."
