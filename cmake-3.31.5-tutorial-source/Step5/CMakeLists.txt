@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.3)
 
 # set the project name and version
 project(Tutorial VERSION 1.0)
@@ -36,24 +36,46 @@ target_include_directories(Tutorial PUBLIC
 
 # TODO 3: Install Tutorial in the bin directory
 # Hint: Use the TARGETS and DESTINATION parameters
+install(TARGETS Tutorial DESTINATION bin)
 
 # TODO 4: Install TutorialConfig.h to the include directory
 # Hint: Use the FILES and DESTINATION parameters
+install(FILES "${PROJECT_BINARY_DIR}/TutorialConfig.h" DESTINATION include)
 
 # TODO 5: Enable testing
+enable_testing()
 
 # TODO 6: Add a test called Runs which runs the following command:
 # $ Tutorial 25
+add_test(NAME Runs COMMAND Tutorial 25)
 
 # TODO 7: Add a test called Usage which runs the following command:
 # $ Tutorial
 # Make sure the expected output is displayed.
 # Hint: Use the PASS_REGULAR_EXPRESSION property with "Usage.*number"
+add_test(NAME Usage COMMAND Tutorial)
+set_tests_properties(Usage PROPERTIES PASS_REGULAR_EXPRESSION "Usage.*number")
 
 # TODO 8: Add a test which runs the following command:
 # $ Tutorial 4
 # Make sure the result is correct.
 # Hint: Use the PASS_REGULAR_EXPRESSION property with "4 is 2"
+add_test(NAME Test4 COMMAND Tutorial 4)
+set_tests_properties(Test4 PROPERTIES PASS_REGULAR_EXPRESSION "4 is 2")
 
 # TODO 9: Add more tests. Create a function called do_test to avoid copy +
 # paste. Test the following values: 4, 9, 5, 7, 25, -25 and 0.0001.
+add_test(NAME Negative COMMAND Tutorial -25)
+
+function(TutorialTest name target args result)
+    add_test(NAME ${name} COMMAND ${target} ${args})
+    set_tests_properties(${name} PROPERTIES PASS_REGULAR_EXPRESSION ${result})
+endfunction(TutorialTest)
+
+TutorialTest("Test4.v2" "Tutorial" "4" "4 is 2")
+TutorialTest("Test9" "Tutorial" "9" "9 is 3")
+TutorialTest("Test5" "Tutorial" "5" "5 is 2.236")
+TutorialTest("Test7" "Tutorial" "7" "7 is 2.645")
+TutorialTest("Test25" "Tutorial" "25" "25 is 5")
+TutorialTest("Test-25" "Tutorial" "-25" "-25 is (-nan|nan|0)")
+TutorialTest("Test0.0001" "Tutorial" "0.0001" "0.0001 is 0.01")
